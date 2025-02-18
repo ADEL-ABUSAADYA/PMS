@@ -13,7 +13,7 @@ namespace PMS.Features.SprintItemManagement.AddSprintItem
         {
         }
         
-        [HttpPost("api/AddSprintItem")]
+        [HttpPost]
         public async Task<EndpointResponse<bool>> AddTask(AddSprintItemRequestViewModel viewmodel)
         {
             var validationResult = ValidateRequest(viewmodel);
