@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace PMS.Features.AuthManagement.LogInUser;
 
-public record LogInInfoDTO(int ID, bool Is2FAEnabled, string hashedPassword, bool IsEmailConfirmed);
+public record LogInInfoDTO(Guid ID, bool Is2FAEnabled, string hashedPassword, bool IsEmailConfirmed);
 
 public class LogInInfoDTOValidator : AbstractValidator<LogInInfoDTO>
 {

@@ -25,7 +25,7 @@ namespace PMS.Data.Repositories{
             _dbSet.Add(entity);
         }
 
-        public async Task<int> AddAsync(Entity entity)
+        public async Task<Guid> AddAsync(Entity entity)
         {
             entity.CreatedDate = DateTime.Now;
              _dbSet.Add(entity);
@@ -128,12 +128,12 @@ namespace PMS.Data.Repositories{
             return _dbSet;
         }
 
-        public Entity GetByID(int id)
+        public Entity GetByID(Guid id)
         {
             return Get(x => x.ID == id).FirstOrDefault();
         }
 
-        public async Task<Entity> GetByIDAsync(int id)
+        public async Task<Entity> GetByIDAsync(Guid id)
         {
             return await Get(x => x.ID == id).FirstOrDefaultAsync();
         }

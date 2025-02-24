@@ -1,10 +1,13 @@
 using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using DotNetCore.CAP;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using PMS.Configrations;
+using PMS.Data;
+using PMS.Features.AuthManagement.RegisterUser.Consumers;
 using PMS.Middlewares;
 
 namespace PMS;
@@ -23,6 +26,27 @@ public class Program
         
         var OTPSettings = builder.Configuration.GetSection("OTPSettings");
         var otpKey = Encoding.UTF8.GetBytes(OTPSettings.GetValue<string>("SecretKey"));
+
+        builder.Services.AddCap(cfg =>
+        {
+            cfg.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            cfg.UseEntityFramework<Context>();
+            cfg.UseRabbitMQ(opt =>
+            {
+                opt.HostName = "localhost";
+                opt.Port = 5672; // Default AMQP port
+                opt.UserName = "guest";
+                opt.Password = "guest";
+                opt.ExchangeName = "cap.default.router";
+            });
+
+            cfg.DefaultGroupName = "Cap.queue";
+            cfg.UseDashboard();
+            cfg.FailedRetryCount = 5; // Retry on failures
+        });
+
+
+        builder.Services.AddScoped<UserRegisteredEventConsumer>();
 
         builder.Services.AddAuthentication(opts => {
                 opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

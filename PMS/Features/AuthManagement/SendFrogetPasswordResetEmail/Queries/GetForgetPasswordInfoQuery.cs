@@ -32,7 +32,7 @@ namespace PMS.Features.AuthManagement.SendFrogetPasswordResetEmail.Queries
             if (resetInfo is null )
                 return RequestResult<FrogetPasswordInfoDTO>.Failure(ErrorCode.UserNotFound, "this user not found");
 
-            if (!resetInfo.IsEmailConfirmed || resetInfo.UserID <= 0 )
+            if (!resetInfo.IsEmailConfirmed || resetInfo.UserID == Guid.Empty )
             {
                 return RequestResult<FrogetPasswordInfoDTO>.Failure(ErrorCode.AccountNotVerified, "Verify your email address");
             }

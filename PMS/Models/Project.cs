@@ -11,7 +11,7 @@ public class Project : BaseModel
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; } 
     
-    public int CreatorID { get; set; }
+    public Guid CreatorID { get; set; }
     public User Creator { get; set; }
     
     public ICollection<SprintItem> SprintItems { get; set; }

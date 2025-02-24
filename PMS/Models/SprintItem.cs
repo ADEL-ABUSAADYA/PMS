@@ -8,7 +8,7 @@ public class SprintItem : BaseModel
     public string Description { get; set; }
     public SprintItemStatus Status { get; set; }
     
-    public int ProjectID { get; set; }
+    public Guid ProjectID { get; set; }
     public Project Project { get; set; }
     
     public ICollection<UserSprintItem> UserSprintItems { get; set; }

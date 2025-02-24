@@ -18,11 +18,11 @@ namespace PMS.Data.Repositories
         IQueryable<Entity> Get(Expression<Func<Entity, bool>> predicate);
 
         Task<bool> AnyAsync(Expression<Func<Entity, bool>> predicate);
-        Entity GetByID(int id);
+        Entity GetByID(Guid id);
 
-        Task<Entity> GetByIDAsync(int id);
+        Task<Entity> GetByIDAsync(Guid id);
         void SaveChanges();
-        Task<int> AddAsync(Entity entity);
+        Task<Guid> AddAsync(Entity entity);
         Task AddRangeAsync(IEnumerable<Entity> entities);
 
         Task SaveChangesAsync();

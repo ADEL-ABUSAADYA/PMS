@@ -45,14 +45,18 @@ public class Context : DbContext
             .WithMany(u => u.CreatedProjects)
             .HasForeignKey(p => p.CreatorID)
             .OnDelete(DeleteBehavior.NoAction);  // Avoid cascade delete
+        
     }
 
     private void SeedData(ModelBuilder modelBuilder)
     {
+        Guid adminRoleId = Guid.NewGuid();
+        Guid userRoleId = Guid.NewGuid();
+        Guid adminUserId = Guid.NewGuid();
         // Seed roles
         modelBuilder.Entity<Role>().HasData(
-            new Role { ID = 1, Name = "Admin", Description = "Administrator Role" },
-            new Role { ID = 2, Name = "User", Description = "Standard User Role" }
+            new Role { ID = adminRoleId, Name = "Admin", Description = "Administrator Role" },
+            new Role { ID = userRoleId, Name = "User", Description = "Standard User Role" }
         );
 
         PasswordHasher<string> passwordHasher = new PasswordHasher<string>();
@@ -60,7 +64,7 @@ public class Context : DbContext
         modelBuilder.Entity<User>().HasData(
             new User
             {
-                ID = 1, // Make sure the ID is set explicitly, as auto-generation might conflict.
+                ID = adminUserId, // Make sure the ID is set explicitly, as auto-generation might conflict.
                 Email = "upskillingfinalproject@gmail.com",
                 Password = password, // Ensure to hash passwords properly in your real app!
                 Name = "Admin User",
@@ -69,21 +73,20 @@ public class Context : DbContext
                 IsActive = true,
                 TwoFactorAuthEnabled = false,
                 IsEmailConfirmed = true,
-                RoleID = 1 // Admin role
+                RoleID = adminRoleId // Admin role
             }
         );
         
         // Seed User Features for Admin
         var features = Enum.GetValues(typeof(Feature)).Cast<Feature>().ToList();
         var userFeatures = new List<UserFeature>();
-
-        int idCounter = 1;
+        
         foreach (var feature in features)
         {
             userFeatures.Add(new UserFeature
             {
-                ID = idCounter++,
-                UserID = 1,
+                ID = Guid.NewGuid(),
+                UserID = adminUserId,  // Use correct GUID reference
                 Feature = feature
             });
         }

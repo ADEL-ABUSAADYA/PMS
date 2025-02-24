@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace PMS.Features.AuthManagement.LogInUserWith2FA;
 
-public record LogInInfoWith2FADTO(int ID, bool Is2FAEnabled,  string TwoFactorAuthsecretKey);
+public record LogInInfoWith2FADTO(Guid ID, bool Is2FAEnabled,  string TwoFactorAuthsecretKey);
 
 public class LogInInfoWith2FADTOValidator : AbstractValidator<LogInInfoWith2FADTO>
 {

@@ -23,7 +23,7 @@ public class GetUserLogInInfoWith2FAQueryHandler : BaseRequestHandler<GetUserLog
         var userData  = await _repository.Get(u => u.Email == request.email)
             .Select(u => new LogInInfoWith2FADTO(u.ID, u.TwoFactorAuthEnabled, u.TwoFactorAuthsecretKey)).FirstOrDefaultAsync();
         
-        if (userData.ID <= 0)
+        if (userData.ID == Guid.Empty)
         {
             return RequestResult<LogInInfoWith2FADTO>.Failure(ErrorCode.UserNotFound, "please check your email address.");
         }

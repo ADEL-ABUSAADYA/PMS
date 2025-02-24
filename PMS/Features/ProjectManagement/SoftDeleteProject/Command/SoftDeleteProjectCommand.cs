@@ -9,7 +9,7 @@ using PMS.Models;
 
 namespace PMS.Features.ProjectManagement.SoftDeleteProject.Command
 {
-    public record SoftDeleteProjectCommand(int ProjectID) : IRequest<RequestResult<bool>>;
+    public record SoftDeleteProjectCommand(Guid ProjectID) : IRequest<RequestResult<bool>>;
 
     public class DeleteProjectCommandHandler : BaseRequestHandler<SoftDeleteProjectCommand, RequestResult<bool>>
     {

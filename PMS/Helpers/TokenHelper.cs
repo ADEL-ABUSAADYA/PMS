@@ -14,7 +14,7 @@ namespace PMS.Helpers
             _configuration = configuration;
         }
 
-        public string GenerateToken(int userID)
+        public string GenerateToken(Guid userID)
         {
             var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
             var issuer = _configuration["JwtSettings:Issuer"];
@@ -39,7 +39,7 @@ namespace PMS.Helpers
             return tokenHandler.WriteToken(token);
         }
         
-        public string Generate2FALoginToken(int userId)
+        public string Generate2FALoginToken(Guid userId)
         {
             var key = Encoding.ASCII.GetBytes(_configuration["OTPSettings:SecretKey"]);
             var issuer = _configuration["OTPSettings:Issuer"];

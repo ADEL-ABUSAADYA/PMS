@@ -6,7 +6,7 @@ using PMS.Models;
 
 namespace PMS.Features.ProjectManagement.SoftDeleteProject.Command;
 
-public record SoftDeleteListOfSprintItemsCommand(List<int> SprintIDs) : IRequest<RequestResult<bool>>;
+public record SoftDeleteListOfSprintItemsCommand(List<Guid> SprintIDs) : IRequest<RequestResult<bool>>;
 
 public class SoftDeleteListOfSprintItemsCommandHandler : BaseRequestHandler<SoftDeleteListOfSprintItemsCommand, RequestResult<bool>>
 {

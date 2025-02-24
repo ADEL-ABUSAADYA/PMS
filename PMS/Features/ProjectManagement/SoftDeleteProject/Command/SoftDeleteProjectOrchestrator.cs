@@ -5,7 +5,7 @@ using PMS.Features.ProjectManagement.SoftDeleteProject.Queries;
 
 namespace PMS.Features.ProjectManagement.SoftDeleteProject.Command;
 
-public record SoftDeleteProjectOrchestrator(int ProjectID) : IRequest<RequestResult<bool>>;
+public record SoftDeleteProjectOrchestrator(Guid ProjectID) : IRequest<RequestResult<bool>>;
 
 public class SoftDeleteProjectOrchestratorHandler : BaseRequestHandler<SoftDeleteProjectCommand, RequestResult<bool>>
 {

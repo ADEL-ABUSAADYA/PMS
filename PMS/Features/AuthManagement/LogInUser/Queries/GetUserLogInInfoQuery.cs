@@ -23,7 +23,7 @@ public class GetUserLogInInfoQueryHandler : BaseRequestHandler<GetUserLogInInfoQ
         var userData  = await _repository.Get(u => u.Email == request.email && u.IsActive == true)
             .Select(u => new LogInInfoDTO(u.ID, u.TwoFactorAuthEnabled, u.Password, u.IsEmailConfirmed)).FirstOrDefaultAsync();
         
-        if (userData.ID <= 0)
+        if (userData.ID == Guid.Empty)
         {
             return RequestResult<LogInInfoDTO>.Failure(ErrorCode.UserNotFound, "please check your email address.");
         }

@@ -10,9 +10,8 @@
 //         _connection = factory.CreateConnectionAsync().Result;
 //         _channel = _connection.CreateChannelAsync().Result;
 //     }
-//     
-//     public async Task StartAsync(CancellationToken cancellationToken)
-//     {
+//        
+//     public async Task StartAsync(CancellationToken cancellationToken) {
 //         var consumer = new AsyncEventingBasicConsumer(_channel);
 //         consumer.ReceivedAsync += Consumer_ReceivedAsync;
 //         

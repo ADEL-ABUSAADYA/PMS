@@ -1,3 +1,3 @@
 namespace PMS.Features.AuthManagement.SendFrogetPasswordResetEmail;
 
-public record FrogetPasswordInfoDTO(int UserID, bool IsEmailConfirmed);
+public record FrogetPasswordInfoDTO(Guid UserID, bool IsEmailConfirmed);

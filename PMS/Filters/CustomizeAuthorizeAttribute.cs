@@ -29,7 +29,7 @@ namespace PMS.Filters
                 throw new UnauthorizedAccessException();
             }
 
-            var user = int.Parse(userID.Value);
+            var user = Guid.Parse(userID.Value);
 
 
             var hasAccess = await _mediator.Send(new HasAccessQuery(user, _feature));

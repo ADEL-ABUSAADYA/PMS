@@ -8,7 +8,7 @@ using PMS.Models;
 
 namespace PMS.Features.UserManagement.ChangeStatus.Command
 {
-    public record ChangeStatusCommand(int id) : IRequest<RequestResult<bool>>;
+    public record ChangeStatusCommand(Guid id) : IRequest<RequestResult<bool>>;
 
     public class BlockUserCommandHandler : BaseRequestHandler<ChangeStatusCommand, RequestResult<bool>>
     {

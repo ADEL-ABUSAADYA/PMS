@@ -4,10 +4,10 @@ namespace PMS.Models;
 
 public class UserAssignedProject : BaseModel
 {
-    public int UserID { get; set; }
+    public Guid UserID { get; set; }
     public User User { get; set; }
     
-    public int ProjectID { get; set; }
+    public Guid ProjectID { get; set; }
     public Project Project { get; set; }
     
     public DateTime AssignDate { get; set; }

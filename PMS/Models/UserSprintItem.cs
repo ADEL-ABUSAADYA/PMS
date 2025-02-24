@@ -2,9 +2,9 @@ namespace PMS.Models;
 
 public class UserSprintItem :BaseModel
 {
-    public int UserID { get; set; }
+    public Guid UserID { get; set; }
     public User User { get; set; }
     
-    public int SprintItemID { get; set; }
+    public Guid SprintItemID { get; set; }
     public SprintItem SprintItem { get; set; }
 }

@@ -8,9 +8,9 @@ using PMS.Models;
 
 namespace PMS.Features.AuthManagement.ConfirmUserRegistration.Queries;
 
-public record IsUserRegisteredQuery(string email, string token) : IRequest<RequestResult<int>>;
+public record IsUserRegisteredQuery(string email, string token) : IRequest<RequestResult<Guid>>;
 
-public class IsUserRegisteredQueryHandler : BaseRequestHandler<IsUserRegisteredQuery, RequestResult<int>>
+public class IsUserRegisteredQueryHandler : BaseRequestHandler<IsUserRegisteredQuery, RequestResult<Guid>>
 {
     private readonly IRepository<User> _repository;
     public IsUserRegisteredQueryHandler(BaseRequestHandlerParameters parameters, IRepository<User> repository) : base(parameters)
@@ -18,13 +18,13 @@ public class IsUserRegisteredQueryHandler : BaseRequestHandler<IsUserRegisteredQ
         _repository = repository;
     }
 
-    public override async Task<RequestResult<int>> Handle(IsUserRegisteredQuery request, CancellationToken cancellationToken)
+    public override async Task<RequestResult<Guid>> Handle(IsUserRegisteredQuery request, CancellationToken cancellationToken)
     {
         var result= await _repository.Get(u => u.Email == request.email && u.ConfirmationToken == request.token).Select(u => u.ID).FirstOrDefaultAsync();
-        if (result == 0)
+        if (result == Guid.Empty)
         {
-            return RequestResult<int>.Failure(ErrorCode.UserNotFound);
+            return RequestResult<Guid>.Failure(ErrorCode.UserNotFound);
         }
-        return RequestResult<int>.Success(result);
+        return RequestResult<Guid>.Success(result);
     }
 }

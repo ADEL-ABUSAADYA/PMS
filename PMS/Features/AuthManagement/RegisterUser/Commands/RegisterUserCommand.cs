@@ -1,3 +1,6 @@
+using System.Text;
+using System.Text.Json;
+using DotNetCore.CAP;
 using MailKit.Net.Smtp;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -16,9 +19,11 @@ public record RegisterUserCommand(string email, string password, string name, st
 public class RegisterUserCommandHandler : BaseRequestHandler<RegisterUserCommand, RequestResult<bool>>
 {
     private readonly IRepository<User> _repository;
-    public RegisterUserCommandHandler(BaseRequestHandlerParameters parameters, IRepository<User> repository) : base(parameters)
+    private readonly ICapPublisher _capPublisher;
+    public RegisterUserCommandHandler(BaseRequestHandlerParameters parameters, IRepository<User> repository, ICapPublisher capPublisher) : base(parameters)
     {
         _repository = repository;
+        _capPublisher = capPublisher;
     }
 
     public async override Task<RequestResult<bool>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -34,10 +39,10 @@ public class RegisterUserCommandHandler : BaseRequestHandler<RegisterUserCommand
         {
             Email = request.email,
             Password = password,
-            RoleID = 2,
             Name = request.name,
             PhoneNo = request.phoneNo,
             Country = request.country,
+            RoleID = new Guid("80146a4c-2dbe-4eb7-b4dd-ba1d3e8eeb93"),
             IsActive = true,
             ConfirmationToken = Guid.NewGuid().ToString()
         };
@@ -46,17 +51,16 @@ public class RegisterUserCommandHandler : BaseRequestHandler<RegisterUserCommand
         var userID = await _repository.AddAsync(user);
         await _repository.SaveChangesAsync();
         
-        if (userID < 0)
+        if (userID == Guid.Empty)
         return RequestResult<bool>.Failure(ErrorCode.UnKnownError);
-        
-        
-        var confirmationLink = $"{user.ConfirmationToken}";
-        
-        var emailSent = await SendConfirmationEmail(user.Email, user.Name, confirmationLink);
-        if (!emailSent.isSuccess)
-            return RequestResult<bool>.Failure(ErrorCode.EmailNotSent);
+
+        var message = new UserRegisteredEvent(user.ID, user.Email, user.Name, $"{user.ConfirmationToken}", DateTime.UtcNow);
+        var messageJson = JsonSerializer.Serialize(message);
+        var body = Encoding.UTF8.GetBytes(messageJson);
+        await _capPublisher.PublishAsync("user.registered", body );
 
         return RequestResult<bool>.Success(true);
+        
     }
     
     private async Task<RequestResult<bool>> SendConfirmationEmail(string email, string name, string confirmationLink)
@@ -106,3 +110,5 @@ public class RegisterUserCommandHandler : BaseRequestHandler<RegisterUserCommand
         }
     }
 }
+
+

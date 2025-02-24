@@ -17,7 +17,7 @@ public class UserInfoFilter : IActionFilter
         var user = context.HttpContext.User;
         if (user.Identity.IsAuthenticated)
         {
-            var userId = int.TryParse(user.FindFirst("ID")?.Value, out var id) ? id : -1;
+            var userId = Guid.TryParse(user.FindFirst("ID")?.Value, out var id) ? id : Guid.Empty;
             _userInfoProvider.UserInfo = new UserInfo { ID = userId };
         }
     }

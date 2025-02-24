@@ -34,12 +34,12 @@ public class LogInUserCommandHandler : BaseRequestHandler<LogInUserCommand, Requ
         {
             return RequestResult<TokenDTO>.Failure(userInfo.errorCode, "email is not confirmed.");
         }
-        if (userInfo.data.ID > 0 && !userInfo.data.Is2FAEnabled)
+        if (userInfo.data.ID != Guid.Empty && !userInfo.data.Is2FAEnabled)
         {
             var token = _tokenHelper.GenerateToken(userInfo.data.ID);
             return RequestResult<TokenDTO>.Success(new TokenDTO(LogInToken: token, TokenWith2FA: ""));
         }
-        if (userInfo.data.ID > 0 && userInfo.data.Is2FAEnabled)
+        if (userInfo.data.ID != Guid.Empty && userInfo.data.Is2FAEnabled)
         {
             var token2fa = _tokenHelper.Generate2FALoginToken(userInfo.data.ID);
             return RequestResult<TokenDTO>.Success(new TokenDTO(LogInToken: "", TokenWith2FA: token2fa));

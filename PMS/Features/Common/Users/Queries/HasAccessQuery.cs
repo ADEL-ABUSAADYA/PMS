@@ -6,7 +6,7 @@ using PMS.Models;
 
 namespace PMS.Features.Common.Users.Queries
 {
-    public record HasAccessQuery(int ID, Feature Feature) : IRequest<bool>;
+    public record HasAccessQuery(Guid ID, Feature Feature) : IRequest<bool>;
 
     public class HasAccessQueryHandler : BaseRequestHandler<HasAccessQuery, bool>
     {

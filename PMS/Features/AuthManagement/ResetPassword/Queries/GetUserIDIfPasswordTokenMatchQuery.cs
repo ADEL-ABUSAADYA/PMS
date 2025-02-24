@@ -9,9 +9,9 @@ using PMS.Models;
 
 namespace PMS.Features.AuthManagement.ResetPassword.Queries;
 
-public record GetUserIDIfPasswordTokenMatchQuery(string Email, string PasswordToken) : IRequest<RequestResult<int>>;
+public record GetUserIDIfPasswordTokenMatchQuery(string Email, string PasswordToken) : IRequest<RequestResult<Guid>>;
 
-public class GetUserIDIfPasswordTokenMatchQueryHandler : BaseRequestHandler<GetUserIDIfPasswordTokenMatchQuery, RequestResult<int>>
+public class GetUserIDIfPasswordTokenMatchQueryHandler : BaseRequestHandler<GetUserIDIfPasswordTokenMatchQuery, RequestResult<Guid>>
 {
     private readonly IRepository<User> _repository;
     public GetUserIDIfPasswordTokenMatchQueryHandler(BaseRequestHandlerParameters parameters, IRepository<User> repository) : base(parameters)
@@ -19,13 +19,13 @@ public class GetUserIDIfPasswordTokenMatchQueryHandler : BaseRequestHandler<GetU
         _repository = repository;
     }
 
-    public override async Task<RequestResult<int>> Handle(GetUserIDIfPasswordTokenMatchQuery request, CancellationToken cancellationToken)
+    public override async Task<RequestResult<Guid>> Handle(GetUserIDIfPasswordTokenMatchQuery request, CancellationToken cancellationToken)
     {
         var userID = await _repository.Get(U => U.Email == request.Email && U.ResetPasswordToken == request.PasswordToken).Select(u => u.ID).FirstOrDefaultAsync();
 
-        if(userID <= 0)
-            return RequestResult<int>.Failure(ErrorCode.UserNotFound, "User does not exist");
+        if(userID == Guid.Empty)
+            return RequestResult<Guid>.Failure(ErrorCode.UserNotFound, "User does not exist");
         
-        return RequestResult<int>.Success(userID);
+        return RequestResult<Guid>.Success(userID);
     }
 }

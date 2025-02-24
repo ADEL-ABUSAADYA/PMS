@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text;
 using Autofac;
+using DotNetCore.CAP;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,6 +20,7 @@ using PMS.Features.AuthManagement.ActivateUser2FA;
 using PMS.Features.AuthManagement.ConfirmUserRegistration;
 using PMS.Features.AuthManagement.LogInUser;
 using PMS.Features.AuthManagement.RegisterUser;
+using PMS.Features.AuthManagement.RegisterUser.Consumers;
 using PMS.Features.Common.Pagination;
 using PMS.Features.UserManagement.GetAllUsers;
 using PMS.Features.UserManagement.GetAllUsers.Queries;
@@ -80,7 +82,7 @@ namespace PMS.Configrations
 
             #region Repository Registration
             // Register repositories
-            builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
+            // builder.RegisterType<UserRepository>().As<IUserRepository>().InstancePerLifetimeScope();
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
             builder.RegisterType<Repository<BaseModel>>().As<IRepository<BaseModel>>().InstancePerLifetimeScope();
             #endregion
@@ -152,7 +154,7 @@ namespace PMS.Configrations
             #endregion
             builder.RegisterType<BaseRequestHandlerParameters>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<GetAllUsersQueryHandler>().As<IRequestHandler<GetAllUsersQuery, RequestResult<PaginatedResult<UserDTO>>>>().InstancePerLifetimeScope();
-           
+            
 
         }
     }

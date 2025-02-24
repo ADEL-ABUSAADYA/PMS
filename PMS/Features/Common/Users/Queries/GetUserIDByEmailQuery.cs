@@ -8,9 +8,9 @@ using PMS.Models;
 
 namespace PMS.Features.Common.Users.Queries;
 
-public record GetUserIDByEmailQuery(string Email) : IRequest<RequestResult<int>>;
+public record GetUserIDByEmailQuery(string Email) : IRequest<RequestResult<Guid>>;
 
-public class GetUserIDByEmailQueryHandler : BaseRequestHandler<GetUserIDByEmailQuery, RequestResult<int>>
+public class GetUserIDByEmailQueryHandler : BaseRequestHandler<GetUserIDByEmailQuery, RequestResult<Guid>>
 {
     private readonly IRepository<User> _repository;
     public GetUserIDByEmailQueryHandler(BaseRequestHandlerParameters parameters, IRepository<User> repository) : base(parameters)
@@ -18,13 +18,13 @@ public class GetUserIDByEmailQueryHandler : BaseRequestHandler<GetUserIDByEmailQ
         _repository = repository;
     }
 
-    public override async Task<RequestResult<int>> Handle(GetUserIDByEmailQuery request, CancellationToken cancellationToken)
+    public override async Task<RequestResult<Guid>> Handle(GetUserIDByEmailQuery request, CancellationToken cancellationToken)
     {
         var userID = await _repository.Get(U => U.Email == request.Email).Select(u => u.ID).FirstOrDefaultAsync();
 
-        if(userID <= 0)
-            return RequestResult<int>.Failure(ErrorCode.UserNotFound, "User does not exist");
+        if(userID == Guid.Empty)
+            return RequestResult<Guid>.Failure(ErrorCode.UserNotFound, "User does not exist");
         
-        return RequestResult<int>.Success(userID);
+        return RequestResult<Guid>.Success(userID);
     }
 }

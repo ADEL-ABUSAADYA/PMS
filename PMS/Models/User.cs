@@ -19,11 +19,16 @@ public class User : BaseModel
     
     public string? ResetPasswordToken { get; set; }
     
-    public int RoleID { get; set; }
+    public Guid RoleID { get; set; }
     public Role Role { get; set; }
     
     public ICollection<UserFeature> UserFeatures { get; set; }
     public ICollection<UserSprintItem> UserSprintItems { get; set; }
     public ICollection<Project> CreatedProjects { get; set; }
     public ICollection<UserAssignedProject> UserAssignedProjects { get; set; } = new List<UserAssignedProject>();
+    
+    public User()
+    {
+        RoleID = Guid.Empty; // Set this manually during user creation
+    }
 }
