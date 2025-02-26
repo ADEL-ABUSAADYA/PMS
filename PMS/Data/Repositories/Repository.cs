@@ -19,16 +19,16 @@ namespace PMS.Data.Repositories{
         {
             return _dbSet;
         }
-        public void Add(Entity entity)
+        public void Add(Entity entity, CancellationToken cancellationToken = default)
         {
             entity.CreatedDate = DateTime.Now;
-            _dbSet.Add(entity);
+            _dbSet.AddAsync(entity, cancellationToken);
         }
 
-        public async Task<Guid> AddAsync(Entity entity)
+        public async Task<Guid> AddAsync(Entity entity, CancellationToken cancellationToken = default(CancellationToken))
         {
             entity.CreatedDate = DateTime.Now;
-             _dbSet.Add(entity);
+             _dbSet.AddAsync(entity, cancellationToken);
              return entity.ID;
         }
         public void SaveInclude(Entity entity, params string[] properties)
@@ -143,9 +143,9 @@ namespace PMS.Data.Repositories{
             _context.SaveChanges();
         }
 
-        public async Task SaveChangesAsync()
+        public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<bool> AnyAsync(Expression<Func<Entity, bool>> predicate)

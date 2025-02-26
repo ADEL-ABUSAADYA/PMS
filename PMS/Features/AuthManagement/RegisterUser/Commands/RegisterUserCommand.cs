@@ -1,10 +1,7 @@
-using System.Text;
 using System.Text.Json;
 using DotNetCore.CAP;
-using MailKit.Net.Smtp;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using MimeKit;
 using PMS.Common.BaseHandlers;
 using PMS.Common.Data.Enums;
 using PMS.Common.Views;
@@ -20,21 +17,24 @@ public class RegisterUserCommandHandler : BaseRequestHandler<RegisterUserCommand
 {
     private readonly IRepository<User> _repository;
     private readonly ICapPublisher _capPublisher;
-    public RegisterUserCommandHandler(BaseRequestHandlerParameters parameters, IRepository<User> repository, ICapPublisher capPublisher) : base(parameters)
+
+    public RegisterUserCommandHandler(BaseRequestHandlerParameters parameters, IRepository<User> repository,
+        ICapPublisher capPublisher) : base(parameters)
     {
         _repository = repository;
         _capPublisher = capPublisher;
     }
 
-    public async override Task<RequestResult<bool>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+    public async override Task<RequestResult<bool>> Handle(RegisterUserCommand request,
+        CancellationToken cancellationToken)
     {
         var reponse = await _mediator.Send(new IsUserExistQuery(request.email));
         if (reponse.isSuccess)
             return RequestResult<bool>.Failure(ErrorCode.UserAlreadyExist);
-        
+
         PasswordHasher<string> passwordHasher = new PasswordHasher<string>();
         var password = passwordHasher.HashPassword(null, request.password);
-        
+
         var user = new User
         {
             Email = request.email,
@@ -46,69 +46,19 @@ public class RegisterUserCommandHandler : BaseRequestHandler<RegisterUserCommand
             IsActive = true,
             ConfirmationToken = Guid.NewGuid().ToString()
         };
-        
-       
-        var userID = await _repository.AddAsync(user);
-        await _repository.SaveChangesAsync();
-        
+
+
+        var userID = await _repository.AddAsync(user, _cancellationToken);
+        await _repository.SaveChangesAsync(_cancellationToken);
+
         if (userID == Guid.Empty)
-        return RequestResult<bool>.Failure(ErrorCode.UnKnownError);
+            return RequestResult<bool>.Failure(ErrorCode.UnKnownError);
 
-        var message = new UserRegisteredEvent(user.ID, user.Email, user.Name, $"{user.ConfirmationToken}", DateTime.UtcNow);
+        var message = new UserRegisteredEvent(user.Email, user.Name, $"{user.ConfirmationToken}", DateTime.UtcNow);
         var messageJson = JsonSerializer.Serialize(message);
-        var body = Encoding.UTF8.GetBytes(messageJson);
-        await _capPublisher.PublishAsync("user.registered", body );
+        await _capPublisher.PublishAsync("user.registered", messageJson);
 
-        return RequestResult<bool>.Success(true);
         
-    }
-    
-    private async Task<RequestResult<bool>> SendConfirmationEmail(string email, string name, string confirmationLink)
-    {
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("adel", "upskillingfinalproject@gmail.com"));
-        message.To.Add(new MailboxAddress(name, email));
-        message.Subject = "UpSkilling Final Project";
-
-        // Create multipart content for both plain text and HTML
-        var bodyBuilder = new BodyBuilder
-        {
-            TextBody = $"Please confirm your registration by token [{confirmationLink}]",
-            HtmlBody = $"Please confirm your registration by token [{confirmationLink}]"
-        };
-
-        message.Body = bodyBuilder.ToMessageBody();
-
-        try
-        {
-            using (var client = new SmtpClient())
-            {
-                // Set the timeout for connection and authentication
-                client.Timeout = 10000;  // Timeout after 10 seconds
-            
-                // Connect using StartTLS for security
-                await client.ConnectAsync("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-
-                // Authenticate with the provided credentials
-                await client.AuthenticateAsync("upskillingfinalproject@gmail.com", "vxfdhstkqegcfnei");
-
-                // Send the email
-                await client.SendAsync(message);
-                await client.DisconnectAsync(true);
-            }
-
-            return RequestResult<bool>.Success(true);
-        }
-        catch (Exception ex)
-        {
-            // Log the detailed exception message for debugging
-            Console.WriteLine($"Error sending email: {ex.Message}");
-            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-
-            // Return failure with error details
-            return RequestResult<bool>.Failure(ErrorCode.UnKnownError, ex.Message);
-        }
+        return RequestResult<bool>.Success(true);
     }
 }
-
-

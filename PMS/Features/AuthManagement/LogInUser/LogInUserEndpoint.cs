@@ -5,7 +5,7 @@ using PMS.Common.Views;
 using PMS.Features.Common.Users.DTOs;
 using PMS.Features.AuthManagement.LogInUser.Commands;
 using PMS.Features.AuthManagement.RegisterUser.Commands;
-using PMS.Features.AuthManagement.ReSendRegistrationEmail.Commands;
+
 
 namespace PMS.Features.AuthManagement.LogInUser;
 

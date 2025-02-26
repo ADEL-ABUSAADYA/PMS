@@ -27,11 +27,14 @@ public class GetUserRegistrationInfoQueryHandler : BaseRequestHandler<GetUserReg
             Name = u.Name,
             ConfirmationToken = u.ConfirmationToken,
             Email = u.Email,
-            IsRegistered = u.IsEmailConfirmed
+            IsEmailConfirmed = u.IsEmailConfirmed
         }).FirstOrDefaultAsync();
         
         if (result == null)
             return RequestResult<RegistrationInfoDTO>.Failure(ErrorCode.UserNotFound, "please check your email address or register your email address.");
+        
+        if (result.IsEmailConfirmed)
+            return RequestResult<RegistrationInfoDTO>.Failure(ErrorCode.UserAlreadyRegistered, "user already registered please login");
         
         return RequestResult<RegistrationInfoDTO>.Success(result);
     }

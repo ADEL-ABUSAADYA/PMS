@@ -8,7 +8,7 @@ namespace PMS.Data.Repositories
     public interface IRepository<Entity> where Entity : BaseModel 
     {
         DbSet<Entity> Query();
-        void Add(Entity entity);
+        void Add(Entity entity, CancellationToken cancellationToken = default);
         Task<bool> SaveIncludeAsync(Entity entity, params string[] properties);
         void SaveInclude(Entity entity, params string[] properties);
         void Delete(Entity entity);
@@ -22,9 +22,9 @@ namespace PMS.Data.Repositories
 
         Task<Entity> GetByIDAsync(Guid id);
         void SaveChanges();
-        Task<Guid> AddAsync(Entity entity);
+        Task<Guid> AddAsync(Entity entity, CancellationToken cancellationToken = default);
         Task AddRangeAsync(IEnumerable<Entity> entities);
 
-        Task SaveChangesAsync();
+        Task SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
