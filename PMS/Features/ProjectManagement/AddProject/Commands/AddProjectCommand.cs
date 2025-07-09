@@ -9,7 +9,7 @@ using PMS.Models;
 
 namespace PMS.Features.ProjectManagement.AddProject.Commands
 {
-    public record AddProjectCommand(string title , string describtion, DateTime endDate) : IRequest<RequestResult<bool>>;
+    public record AddProjectCommand(string Title , string Describtion, DateTime EndDate) : IRequest<RequestResult<bool>>;
 
 
     public class AddProjectCommandHandler : BaseRequestHandler<AddProjectCommand, RequestResult<bool>>
@@ -24,15 +24,15 @@ namespace PMS.Features.ProjectManagement.AddProject.Commands
         { 
 
             // check this project is already exist 
-            var project = await _mediator.Send(new IsProjectExistQuery(request.title)); 
+            var project = await _mediator.Send(new IsProjectExistQuery(request.Title)); 
 
             if (!project.isSuccess) return RequestResult<bool>.Failure(project.errorCode , project.message);
 
             var NewProject = new Project
             {
                 CreatedBy = _userInfo.ID,
-                Description = request.describtion,
-                Title = request.title,
+                Description = request.Describtion,
+                Title = request.Title,
                 CreatedDate = DateTime.Now,
                 CreatorID = _userInfo.ID
             }; 

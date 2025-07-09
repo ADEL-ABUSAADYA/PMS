@@ -18,7 +18,7 @@ public class UserInfoFilter : IActionFilter
         if (user.Identity.IsAuthenticated)
         {
             var userId = Guid.TryParse(user.FindFirst("ID")?.Value, out var id) ? id : Guid.Empty;
-            _userInfoProvider.UserInfo = new UserInfo { ID = userId };
+            _userInfoProvider.UserInfo.ID = userId;
         }
     }
 

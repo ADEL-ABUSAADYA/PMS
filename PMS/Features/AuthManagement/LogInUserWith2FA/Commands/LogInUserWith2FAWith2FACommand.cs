@@ -30,7 +30,7 @@ public class LogInUserWith2FACommandHandler : BaseRequestHandler<LogInUserWith2F
 
         var user = userInfo.data;
         
-        if (user.ID != Guid.Empty || !user.Is2FAEnabled || string.IsNullOrEmpty(user.TwoFactorAuthsecretKey))
+        if (user.ID == Guid.Empty || !user.Is2FAEnabled || string.IsNullOrEmpty(user.TwoFactorAuthsecretKey))
         {
             return RequestResult<string>.Failure(ErrorCode.UserNotFound, "User does not exist or 2FA is not enabled.");
         }

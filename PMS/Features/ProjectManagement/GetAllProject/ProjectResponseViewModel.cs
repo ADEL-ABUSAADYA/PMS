@@ -4,7 +4,7 @@ namespace PMS.Features.ProjectManagement.GetAllProject
 {
     public class ProjectResponseViewModel
     {
-        public List<ProjectDTO> Projects { get; set; }
+        public List<ProjectViewModel> Projects { get; set; }
 
         public int totalNumber { get; set; }
 

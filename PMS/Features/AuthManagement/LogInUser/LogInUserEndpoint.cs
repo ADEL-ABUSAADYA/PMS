@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PMS.Common.AutoMapper;
 using PMS.Common.BaseEndpoints;
 using PMS.Common.Views;
 using PMS.Features.Common.Users.DTOs;
@@ -21,8 +22,8 @@ public class LogInUserEndpoint : BaseEndpoint<LogInUserRequestViewModel, LoginRe
       var validationResult =  ValidateRequest(viewmodel);
       if (!validationResult.isSuccess)
          return validationResult;
-      
-      var loginCommand = new LogInUserCommand(viewmodel.Email, viewmodel.Password);
+
+      var loginCommand = viewmodel.Map<LogInUserCommand>();
       var logInToken = await _mediator.Send(loginCommand);
       if (!logInToken.isSuccess)
          return EndpointResponse<LoginResponeViewModel>.Failure(logInToken.errorCode, logInToken.message);

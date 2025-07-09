@@ -23,5 +23,9 @@ public enum ErrorCode
     ProjectAlreadyExists=24,
     ProjectNotFound,
     NoProjectAdd,
-    NoSprintItems
+    NoSprintItems,
+    Unauthorized,
+    ValidationError,
+    ResourceNotFound,
+    Forbidden
 }

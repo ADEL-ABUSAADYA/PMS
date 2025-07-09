@@ -20,7 +20,7 @@ namespace PMS.Features.ProjectManagement.AddProject
         [HttpPost]
         [Authorize]
         [TypeFilter(typeof(CustomizeAuthorizeAttribute), Arguments =new object[] {Feature.AddProject})]
-        public async Task<EndpointResponse<bool>> AddBook(RequestAddProjectModel viewmodel)
+        public async Task<EndpointResponse<bool>> AddProject(RequestAddProjectModel viewmodel)
         {
             var validationResult = ValidateRequest(viewmodel);
             if (!validationResult.isSuccess)
@@ -32,7 +32,5 @@ namespace PMS.Features.ProjectManagement.AddProject
 
             return EndpointResponse<bool>.Success(true);
         }
-
-
     }
 }

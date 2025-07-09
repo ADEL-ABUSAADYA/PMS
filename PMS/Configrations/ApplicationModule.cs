@@ -15,6 +15,7 @@ using PMS.Common.BaseEndpoints;
 using PMS.Common.BaseHandlers;
 using PMS.Common.Views;
 using PMS.Data;
+using PMS.Data.Interceptors;
 using PMS.Data.Repositories;
 using PMS.Features.AuthManagement.ActivateUser2FA;
 using PMS.Features.AuthManagement.ConfirmUserRegistration;
@@ -154,7 +155,9 @@ namespace PMS.Configrations
             #endregion
             builder.RegisterType<BaseRequestHandlerParameters>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<GetAllUsersQueryHandler>().As<IRequestHandler<GetAllUsersQuery, RequestResult<PaginatedResult<UserDTO>>>>().InstancePerLifetimeScope();
-            
+            builder.RegisterType<TimeOutMiddleware>().InstancePerDependency();
+            builder.RegisterType<CancellationTokenProvider>().AsSelf().SingleInstance();
+            builder.RegisterType<CancelCommandInterceptor>().AsSelf().SingleInstance();
 
         }
     }

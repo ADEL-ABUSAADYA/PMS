@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using PMS.Common.AutoMapper;
 using PMS.Common.BaseHandlers;
 using PMS.Common.Data.Enums;
 using PMS.Common.Views;
@@ -33,15 +34,7 @@ namespace PMS.Features.ProjectManagement.GetAllProject.Queries
             var projects = await query
                 .Skip((request.PageNumber - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .Select(p => new ProjectDTO
-                {
-                    Title = p.Title,
-                    Description = p.Description,
-                    Status = p.Status,
-                    StartDate = p.StartDate,
-                    EndDate = p.EndDate,
-                    CreatorName = p.Creator.Name
-                })
+                .ProjectTo<ProjectDTO>()
                 .ToListAsync(cancellationToken);
 
             if (!projects.Any())

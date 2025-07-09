@@ -1,13 +1,18 @@
 using System.Text;
+using AspNetCoreRateLimit;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using DotNetCore.CAP;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using PMS.Common;
+using PMS.Common.AutoMapper;
 using PMS.Configrations;
 using PMS.Data;
 using PMS.Features.AuthManagement.RegisterUser.Consumers;
+using PMS.Filters;
 using PMS.Middlewares;
 
 namespace PMS;
@@ -45,7 +50,9 @@ public class Program
             cfg.FailedRetryCount = 5; // Retry on failures
         });
 
-
+        builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimitOptions"));
+        builder.Services.AddInMemoryRateLimiting();
+        builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
         builder.Services.AddScoped<UserRegisteredEventConsumer>();
 
         builder.Services.AddAuthentication(opts => {
@@ -85,23 +92,25 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
         builder.Services.AddMediatR(typeof(Program).Assembly);
-        builder.Services.AddControllersWithViews(opt => opt.Filters.Add<UserInfoFilter>());
+        builder.Services.AddControllersWithViews(options =>
+        {
+            options.Filters.Add<UserInfoFilter>();
+            options.Filters.Add<CancellationTokenFilter>();
+        });
+        builder.Services.AddAutoMapper(typeof(Program).Assembly);
         
         var app = builder.Build();
-        app.UseAuthentication();
-        app.UseAuthorization();
+        
+        AutoMapperService._mapper = app.Services.GetService<IMapper>();
+        app.UseIpRateLimiting();
         if (app.Environment.IsDevelopment()) { app.UseSwagger(); app.UseSwaggerUI(); }
         app.UseHttpsRedirection();
+        app.UseAuthentication();
         app.UseAuthorization();
-        app.MapControllers();
         app.UseMiddleware<GlobalErrorHandlerMiddleware>();
         app.UseMiddleware<TransactionMiddleware>();
+        app.UseMiddleware<TimeOutMiddleware>();
+        app.MapControllers();
         app.Run();
-        
-
-        
-        
-
-        
     }
 }

@@ -28,7 +28,7 @@ namespace PMS.Features.ProjectManagement.GetAllProject
             
             var response = new ProjectResponseViewModel
             {
-                Projects = paginatedResult.Items.Select(U => new ProjectDTO
+                Projects = paginatedResult.Items.Select(U => new ProjectViewModel()
                 {
                     Title = U.Title,
                     Description = U.Description,
